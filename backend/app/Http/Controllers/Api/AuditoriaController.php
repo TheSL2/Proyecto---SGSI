@@ -11,7 +11,7 @@ class AuditoriaController extends Controller
 {
     public function index()
     {
-        $auditorias = Auditoria::with('auditorLider')->get();
+        $auditorias = Auditoria::with(['auditorLider', 'areas'])->get();
         return response()->json($auditorias, 200);
     }
 
@@ -33,6 +33,11 @@ class AuditoriaController extends Controller
         }
 
         $auditoria = Auditoria::create($data);
+
+        if ($request->has('areas')) {
+            $auditoria->areas()->sync($request->areas);
+        }
+
         return response()->json($auditoria, 201);
     }
 
@@ -75,6 +80,10 @@ class AuditoriaController extends Controller
         }
 
         $auditoria->update($data);
+        if ($request->has('areas')) {
+            $auditoria->areas()->sync($request->areas);
+        }
+
         return response()->json($auditoria, 200);
     }
 

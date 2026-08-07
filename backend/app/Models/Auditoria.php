@@ -23,4 +23,9 @@ class Auditoria extends Model
     {
         return $this->belongsTo(User::class, 'auditor_lider_id');
     }
+
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class, 'auditoria_areas');
+    }
 }

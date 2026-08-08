@@ -17,6 +17,7 @@ class AuditoriaResource extends JsonResource
             'fecha_inicio' => $this->fecha_inicio,
             'fecha_fin' => $this->fecha_fin,
             'estado' => $this->estado,
+            'conclusiones' => $this->conclusiones,
             'auditor_lider' => new UserResource($this->whenLoaded('auditorLider')),
             'areas' => $this->whenLoaded('areas'),
             'equipo_auditor' => UserResource::collection($this->whenLoaded('equipoAuditor')),

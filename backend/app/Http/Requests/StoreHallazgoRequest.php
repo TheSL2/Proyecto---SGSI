@@ -13,13 +13,15 @@ class StoreHallazgoRequest extends FormRequest
 
     public function rules(): array
     {
+        $esActualizacion = $this->isMethod('patch') || $this->isMethod('put');
+
         return [
-            'checklist_id'        => 'required|exists:checklist_auditorias,id',
-            'tipo_hallazgo'       => 'required|in:No Conforme Mayor,No Conforme Menor,Oportunidad de Mejora,Observacion',
-            'clausula_o_control'  => 'required|string|max:100',
-            'descripcion'         => 'required|string',
-            'estado'              => 'nullable|in:Abierto,En Proceso,Cerrado',
-            'fecha_notificacion'  => 'nullable|date',
+            'checklist_id' => [$esActualizacion ? 'sometimes' : 'required', 'exists:checklist_auditorias,id'],
+            'tipo_hallazgo' => [$esActualizacion ? 'sometimes' : 'required', 'in:No Conforme Mayor,No Conforme Menor,Oportunidad de Mejora,Observacion'],
+            'clausula_o_control' => [$esActualizacion ? 'sometimes' : 'required', 'string', 'max:100'],
+            'descripcion' => [$esActualizacion ? 'sometimes' : 'required', 'string'],
+            'estado' => 'nullable|in:Abierto,En Proceso,Cerrado',
+            'fecha_notificacion' => 'nullable|date',
             'estado_notificacion' => 'nullable|in:Pendiente,Notificado,Aceptado',
         ];
     }

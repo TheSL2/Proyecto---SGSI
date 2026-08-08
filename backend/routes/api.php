@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\ChecklistController;
 use App\Http\Controllers\Api\EvidenciaController;
 use App\Http\Controllers\Api\HallazgoController;
 use App\Http\Controllers\Api\AccionCorrectivaController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\InformeController;
+use App\Http\Controllers\Api\RequisitoIsoController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -25,4 +28,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('hallazgos', HallazgoController::class);
 
     Route::apiResource('acciones-correctivas', AccionCorrectivaController::class);
+
+    Route::get('/dashboard/resumen', [DashboardController::class, 'resumen']);
+
+    Route::get('/auditorias/{id}/informe', [InformeController::class, 'generar']);
+
+    Route::get('/requisito-isos', [RequisitoIsoController::class, 'index']);
+    Route::get('/requisito-isos/{id}', [RequisitoIsoController::class, 'show']);
+    Route::patch('/requisito-isos/{id}', [RequisitoIsoController::class, 'update']);
 });

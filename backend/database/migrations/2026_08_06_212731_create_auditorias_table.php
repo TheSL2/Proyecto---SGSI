@@ -23,6 +23,7 @@ return new class extends Migration
                 'En Revisión de Informe',
                 'Cerrada'
             ])->default('Borrador');
+            $table->text('conclusiones')->nullable();
             
             $table->timestamps();
         });

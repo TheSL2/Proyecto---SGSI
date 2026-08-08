@@ -79,6 +79,19 @@ class AuditoriaController extends Controller
             }
         }
 
+        if (($data['estado'] ?? '') === 'Cerrado') {
+            $hallazgosPendientes = $auditoria->hallazgos()
+                ->whereHas('accionesCorrectivas', function ($query) {
+                    $query->whereIn('estado', ['Pendiente']);
+                })->exists();
+
+            if ($hallazgosPendientes) {
+                return response()->json([
+                    'message' => 'RN-REP-01: No se puede cerrar la auditoría porque existen Acciones Correctivas pendientes de verificación.'
+                ], 422);
+            }
+        }
+
         $auditoria->update($data);
         if ($request->has('areas')) {
             $auditoria->areas()->sync($request->areas);

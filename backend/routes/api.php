@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ChecklistController;
 use App\Http\Controllers\Api\EvidenciaController;
 use App\Http\Controllers\Api\HallazgoController;
 use App\Http\Controllers\Api\AccionCorrectivaController;
+use App\Http\Controllers\Api\DashboardController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -25,4 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('hallazgos', HallazgoController::class);
 
     Route::apiResource('acciones-correctivas', AccionCorrectivaController::class);
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    Route::get('/auditorias/{id}/reporte', [DashboardController::class, 'reporteAuditoria']);
 });

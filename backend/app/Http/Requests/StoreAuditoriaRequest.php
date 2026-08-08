@@ -23,6 +23,7 @@ class StoreAuditoriaRequest extends FormRequest
             'fecha_fin' => [$esActualizacion ? 'sometimes' : 'required', 'date', 'after_or_equal:fecha_inicio'],
             'auditor_lider_id' => 'nullable|exists:users,id',
             'estado' => 'in:Borrador,Planificada,En Ejecución,En Revisión de Informe,Cerrada',
+            'conclusiones' => 'nullable|string',
             'equipo_auditor' => 'nullable|array',
             'equipo_auditor.*' => 'exists:users,id',
         ];

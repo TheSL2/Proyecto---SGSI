@@ -26,6 +26,13 @@ class InformeController extends Controller
             ], 422);
         }
 
+        if (empty($auditoria->conclusiones)) {
+            return response()->json([
+                'message' => 'El informe requiere que el auditor líder redacte las Conclusiones antes de generarse.'
+            ], 422);
+        }
+
+
         $hallazgos = $auditoria->checklists->flatMap->hallazgos;
         $sinAccion = $hallazgos->filter(fn ($h) => $h->accionesCorrectivas->isEmpty());
 

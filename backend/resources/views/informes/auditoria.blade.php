@@ -12,10 +12,10 @@
     <p>{{ $auditoria->alcance }}</p>
 
     <h2>Equipo Auditor</h2>
-    <p>Líder: {{ $auditoria->auditorLider->nombre ?? 'N/A' }}</p>
+    <p>Líder: {{ $auditoria->auditorLider->name ?? 'N/A' }}</p>
     <ul>
         @foreach ($auditoria->equipoAuditor as $miembro)
-            <li>{{ $miembro->nombre }}</li>
+            <li>{{ $miembro->name }}</li>
         @endforeach
     </ul>
 
@@ -33,6 +33,6 @@
     @endforeach
 
     <h2>Conclusiones</h2>
-    <p>[Texto de conclusiones generado o editable]</p>
+    <p>{{ $auditoria->conclusiones }}</p>
 </body>
 </html>

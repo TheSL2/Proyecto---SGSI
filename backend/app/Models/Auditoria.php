@@ -17,6 +17,7 @@ class Auditoria extends Model
         'fecha_fin',
         'auditor_lider_id',
         'estado',
+        'conclusiones'
     ];
 
     public function auditorLider()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
 use App\Http\Requests\StoreAuditoriaRequest;
+use App\Http\Resources\AuditoriaResource;
 use Illuminate\Http\Request;
 
 class AuditoriaController extends Controller
@@ -12,7 +13,7 @@ class AuditoriaController extends Controller
     public function index()
     {
         $auditorias = Auditoria::with(['auditorLider', 'areas'])->get();
-        return response()->json($auditorias, 200);
+        return AuditoriaResource::collection($auditorias);
     }
 
     public function store(StoreAuditoriaRequest $request)
@@ -21,14 +22,16 @@ class AuditoriaController extends Controller
 
         if (($data['estado'] ?? 'Borrador') === 'Planificada') {
             if (empty($data['objetivo']) || empty($data['alcance'])) {
-                return response()->json([
-                    'message' => 'RN-PLAN ANUAL-01: Se requiere Objetivo y Alcance para pasar al estado Planificada.'
-                ], 422);
+                return response()->json(['message' => 'RN-PLAN ANUAL-01: Se requiere Objetivo y Alcance para pasar al estado Planificada.'], 422);
             }
             if (empty($data['auditor_lider_id'])) {
-                return response()->json([
-                    'message' => 'RN-PA-02: Se requiere asignar un Auditor Líder para planificar la auditoría.'
-                ], 422);
+                return response()->json(['message' => 'RN-PA-02: Se requiere asignar un Auditor Líder para planificar la auditoría.'], 422);
+            }
+        }
+
+        if (($data['estado'] ?? 'Borrador') === 'En Ejecución') {
+            if (empty($data['auditor_lider_id']) || empty($data['equipo_auditor'])) {
+                return response()->json(['message' => 'RN-PA-02: Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
             }
         }
 
@@ -37,19 +40,22 @@ class AuditoriaController extends Controller
         if ($request->has('areas')) {
             $auditoria->areas()->sync($request->areas);
         }
+        if ($request->has('equipo_auditor')) {
+            $auditoria->equipoAuditor()->sync($request->equipo_auditor);
+        }
 
-        return response()->json($auditoria, 201);
+        return new AuditoriaResource($auditoria->load(['auditorLider', 'areas', 'equipoAuditor']));
     }
 
     public function show($id)
     {
-        $auditoria = Auditoria::with('auditorLider')->find($id);
+        $auditoria = Auditoria::with(['auditorLider', 'areas'])->find($id);
 
         if (!$auditoria) {
             return response()->json(['message' => 'Auditoría no encontrada'], 404);
         }
 
-        return response()->json($auditoria, 200);
+        return new AuditoriaResource($auditoria);
     }
 
     public function update(StoreAuditoriaRequest $request, $id)
@@ -79,12 +85,21 @@ class AuditoriaController extends Controller
             }
         }
 
+        if (($data['estado'] ?? 'Borrador') === 'En Ejecución') {
+            if (empty($data['auditor_lider_id']) || empty($data['equipo_auditor'])) {
+                return response()->json(['message' => 'RN-PA-02: Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
+            }
+        }
+
         $auditoria->update($data);
         if ($request->has('areas')) {
             $auditoria->areas()->sync($request->areas);
         }
+        if ($request->has('equipo_auditor')) {
+            $auditoria->equipoAuditor()->sync($request->equipo_auditor);
+        }
 
-        return response()->json($auditoria, 200);
+        return new AuditoriaResource($auditoria->load(['auditorLider', 'areas']));
     }
 
     public function destroy($id)

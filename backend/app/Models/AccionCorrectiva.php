@@ -22,6 +22,7 @@ class AccionCorrectiva extends Model
         'fecha_limite',
         'estado',
         'evidencia_cierre_id',
+        'verificado_por',
     ];
 
     public function hallazgo()
@@ -37,5 +38,10 @@ class AccionCorrectiva extends Model
     public function evidenciaCierre()
     {
         return $this->belongsTo(Evidencia::class, 'evidencia_cierre_id');
+    }
+
+    public function verificadoPor()
+    {
+        return $this->belongsTo(User::class, 'verificado_por');
     }
 }

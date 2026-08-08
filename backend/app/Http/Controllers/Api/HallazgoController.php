@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Hallazgo;
 use App\Http\Requests\StoreHallazgoRequest;
+use App\Http\Resources\HallazgoResource;
 
 class HallazgoController extends Controller
 {
+
     public function index()
     {
-        $hallazgos = Hallazgo::with(['auditoria', 'checklist', 'accionesCorrectivas'])->get();
-        return response()->json($hallazgos, 200);
+        $hallazgos = Hallazgo::with(['checklist.auditoria', 'checklist.requisitoIso', 'accionesCorrectivas'])->get();
+
+        return HallazgoResource::collection($hallazgos);
     }
 
     public function store(StoreHallazgoRequest $request)
@@ -19,15 +22,17 @@ class HallazgoController extends Controller
         $data = $request->validated();
 
         $hallazgo = Hallazgo::create($data);
-        return response()->json($hallazgo->load('accionesCorrectivas'), 201);
+
+        return response()->json($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas']), 201);
     }
 
     public function show($id)
     {
-        $hallazgo = Hallazgo::with(['auditoria', 'checklist', 'accionesCorrectivas'])->find($id);
+        $hallazgo = Hallazgo::with(['checklist.auditoria', 'checklist.requisitoIso', 'accionesCorrectivas'])->find($id);
         if (!$hallazgo) {
             return response()->json(['message' => 'Hallazgo no encontrado'], 404);
         }
+        
         return response()->json($hallazgo, 200);
     }
 
@@ -39,9 +44,9 @@ class HallazgoController extends Controller
         }
 
         $data = $request->validated();
-
+        
         $hallazgo->update($data);
-        return response()->json($hallazgo->load('accionesCorrectivas'), 200);
+        return response()->json($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas']), 200);
     }
 
     public function destroy($id)

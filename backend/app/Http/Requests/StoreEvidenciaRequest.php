@@ -14,8 +14,9 @@ class StoreEvidenciaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'checklist_id' => 'required|exists:checklist_auditorias,id',
-            'archivo' => 'required|file|mimes:pdf,png,jpg,jpeg,xlsx,docx|max:10240',
+            'checklist_id' => 'nullable|required_without:hallazgo_id|exists:checklist_auditorias,id',
+            'hallazgo_id'  => 'nullable|required_without:checklist_id|exists:hallazgos,id',
+            'archivo'      => 'required|file|mimes:pdf,png,jpg,jpeg,xlsx,docx|max:10240',
         ];
     }
 }

@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create('requisito_isos', function (Blueprint $table) {
             $table->id();
-            $table->enum('categoria', ['Clausula', 'Anexo A']);
-            $table->string('codigo');
-            $table->string('descripcion');
+            $table->string('categoria', 50);
+            $table->string('codigo', 50);
+            $table->text('descripcion');
+            $table->boolean('aplicable')->default(true);
             $table->text('orientacion_implementacion')->nullable();
             $table->timestamps();
         });

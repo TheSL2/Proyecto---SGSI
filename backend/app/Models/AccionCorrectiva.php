@@ -4,9 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Hallazgo;
-use App\Models\User;
-use App\Models\Evidencia;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccionCorrectiva extends Model
 {
@@ -22,19 +20,30 @@ class AccionCorrectiva extends Model
         'fecha_limite',
         'estado',
         'evidencia_cierre_id',
+        'verificado_por',
     ];
 
-    public function hallazgo()
+    protected $casts = [
+        'fecha_limite' => 'date',
+    ];
+
+
+    public function verificador(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verificado_por');
+    }
+
+    public function hallazgo(): BelongsTo
     {
         return $this->belongsTo(Hallazgo::class, 'hallazgo_id');
     }
 
-    public function responsable()
+    public function responsable(): BelongsTo
     {
         return $this->belongsTo(User::class, 'responsable_id');
     }
 
-    public function evidenciaCierre()
+    public function evidenciaCierre(): BelongsTo
     {
         return $this->belongsTo(Evidencia::class, 'evidencia_cierre_id');
     }

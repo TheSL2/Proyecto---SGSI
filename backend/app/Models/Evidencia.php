@@ -13,11 +13,17 @@ class Evidencia extends Model
 
     protected $fillable = [
         'checklist_id',
+        'hallazgo_id',
         'nombre_archivo',
         'ruta_almacenamiento',
         'hash_sha256',
-        'subido_por',
+        'subido_por'
     ];
+
+    public function hallazgo()
+    {
+        return $this->belongsTo(Hallazgo::class, 'hallazgo_id');
+    }
 
     public function checklist()
     {

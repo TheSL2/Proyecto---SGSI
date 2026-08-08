@@ -18,9 +18,10 @@ class StoreAccionCorrectivaRequest extends FormRequest
             'causa_raiz' => 'nullable|string',
             'descripcion_accion' => 'required|string',
             'responsable_id' => 'required|exists:users,id',
-            'fecha_limite' => 'required|date|after_or_equal:today',
+            'fecha_limite' => 'required|date',
             'estado' => 'nullable|in:Pendiente,En Proceso,Verificada,Rechazada',
             'evidencia_cierre_id' => 'nullable|exists:evidencias,id',
+            'verificado_por' => 'nullable|exists:users,id',
         ];
     }
 }

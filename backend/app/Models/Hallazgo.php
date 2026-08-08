@@ -4,34 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Auditoria;
-use App\Models\ChecklistAuditoria;
-use App\Models\AccionCorrectiva;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Hallazgo extends Model
 {
     use HasFactory;
 
+    protected $table = 'hallazgos';
+
     protected $fillable = [
-        'auditoria_id',
         'checklist_id',
         'tipo_hallazgo',
         'descripcion',
-        'evidencia_objetiva',
+        'fecha_notificacion',
+        'estado_notificacion',
         'estado',
     ];
 
-    public function auditoria()
-    {
-        return $this->belongsTo(Auditoria::class, 'auditoria_id');
-    }
+    protected $casts = [
+        'fecha_notificacion' => 'datetime',
+    ];
 
-    public function checklist()
+    public function checklist(): BelongsTo
     {
         return $this->belongsTo(ChecklistAuditoria::class, 'checklist_id');
     }
 
-    public function accionesCorrectivas()
+    public function accionesCorrectivas(): HasMany
     {
         return $this->hasMany(AccionCorrectiva::class, 'hallazgo_id');
     }

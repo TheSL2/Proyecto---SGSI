@@ -13,6 +13,7 @@ class RequisitoIso extends Model
         'categoria',
         'codigo',
         'descripcion',
+        'aplicabilidad',
         'orientacion_implementacion'
     ];
 }

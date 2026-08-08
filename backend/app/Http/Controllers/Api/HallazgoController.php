@@ -10,7 +10,7 @@ class HallazgoController extends Controller
 {
     public function index()
     {
-        $hallazgos = Hallazgo::with(['auditoria', 'checklist', 'accionesCorrectivas'])->get();
+        $hallazgos = Hallazgo::with(['checklist.requisitoIso', 'accionesCorrectivas'])->get();
         return response()->json($hallazgos, 200);
     }
 
@@ -18,13 +18,17 @@ class HallazgoController extends Controller
     {
         $data = $request->validated();
 
+        $data['fecha_notificacion']  = now();
+        $data['estado_notificacion'] = 'Pendiente';
+        $data['estado'] = $data['estado'] ?? 'Abierto';
+        
         $hallazgo = Hallazgo::create($data);
-        return response()->json($hallazgo->load('accionesCorrectivas'), 201);
+        return response()->json($hallazgo->load(['checklist.requisitoIso', 'accionesCorrectivas']), 201);
     }
 
     public function show($id)
     {
-        $hallazgo = Hallazgo::with(['auditoria', 'checklist', 'accionesCorrectivas'])->find($id);
+        $hallazgo = Hallazgo::with(['checklist.requisitoIso', 'accionesCorrectivas'])->find($id);
         if (!$hallazgo) {
             return response()->json(['message' => 'Hallazgo no encontrado'], 404);
         }
@@ -41,7 +45,7 @@ class HallazgoController extends Controller
         $data = $request->validated();
 
         $hallazgo->update($data);
-        return response()->json($hallazgo->load('accionesCorrectivas'), 200);
+        return response()->json($hallazgo->load(['checklist.requisitoIso', 'accionesCorrectivas']), 200);
     }
 
     public function destroy($id)

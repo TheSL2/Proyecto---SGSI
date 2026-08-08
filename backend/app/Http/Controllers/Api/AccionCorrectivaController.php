@@ -11,7 +11,7 @@ class AccionCorrectivaController extends Controller
 {
     public function index()
     {
-        $acciones = AccionCorrectiva::with(['hallazgo', 'responsable', 'evidenciaCierre'])->get();
+        $acciones = AccionCorrectiva::with(['hallazgo.checklist.requisitoIso', 'responsable', 'verificador', 'evidenciaCierre'])->get();
         return response()->json($acciones, 200);
     }
 
@@ -27,12 +27,12 @@ class AccionCorrectivaController extends Controller
         }
 
         $accion = AccionCorrectiva::create($data);
-        return response()->json($accion->load(['hallazgo', 'responsable', 'evidenciaCierre']), 201);
+        return response()->json($accion->load(['hallazgo', 'responsable', 'verificador', 'evidenciaCierre']), 201);
     }
 
     public function show($id)
     {
-        $accion = AccionCorrectiva::with(['hallazgo', 'responsable', 'evidenciaCierre'])->find($id);
+        $accion = AccionCorrectiva::with(['hallazgo.checklist.requisitoIso', 'responsable', 'verificador', 'evidenciaCierre'])->find($id);
         if (!$accion) {
             return response()->json(['message' => 'Acción Correctiva no encontrada'], 404);
         }
@@ -49,20 +49,31 @@ class AccionCorrectivaController extends Controller
         $data = $request->validated();
         $hallazgo = $accion->hallazgo;
         
-        if (in_array($hallazgo->tipo_hallazgo, ['No Conforme Mayor', 'No Conforme Menor']) && empty($data['causa_raiz'])) {
+        if (in_array($hallazgo->tipo_hallazgo, ['No Conforme Mayor', 'No Conforme Menor']) && empty($data['causa_raiz'] ?? $accion->causa_raiz)) {
             return response()->json([
                 'message' => 'RN-HALLAZGO-01: Es obligatorio registrar el Análisis de Causa Raíz para No Conformidades.'
             ], 422);
         }
         
-        if (($data['estado'] ?? $accion->estado) === 'Verificada' && empty($data['evidencia_cierre_id']) && empty($accion->evidencia_cierre_id)) {
-            return response()->json([
-                'message' => 'Para verificar y cerrar una Acción Correctiva es obligatorio asociar una Evidencia Digital de Cierre.'
-            ], 422);
+        if (($data['estado'] ?? $accion->estado) === 'Verificada') {
+            $user = $request->user();
+            if (!$user->hasRole('Administrador') && !$user->hasRole('Auditor') && !$user->hasRole('Consultor')) {
+                return response()->json([
+                    'message' => 'RN-AC-02: Solo el equipo auditor puede verificar y dar por cerrada una acción correctiva.'
+                ], 403);
+            }
+
+            if (empty($data['evidencia_cierre_id']) && empty($accion->evidencia_cierre_id)) {
+                return response()->json([
+                    'message' => 'Para verificar y cerrar una Acción Correctiva es obligatorio asociar una Evidencia Digital de Cierre.'
+                ], 422);
+            }
+            
+            $data['verificado_por'] = $user->id;
         }
 
         $accion->update($data);
-        return response()->json($accion->load(['hallazgo', 'responsable', 'evidenciaCierre']), 200);
+        return response()->json($accion->load(['hallazgo', 'responsable', 'verificador', 'evidenciaCierre']), 200);
     }
 
     public function destroy($id)

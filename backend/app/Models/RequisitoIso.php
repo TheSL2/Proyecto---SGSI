@@ -15,4 +15,9 @@ class RequisitoIso extends Model
         'descripcion',
         'orientacion_implementacion'
     ];
+
+    public function checklists()
+    {
+        return $this->hasMany(ChecklistAuditoria::class, 'requisito_iso_id');
+    }
 }

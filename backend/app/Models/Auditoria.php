@@ -31,7 +31,7 @@ class Auditoria extends Model
     
     public function equipoAuditor()
     {
-        return $this->belongsToMany(User::class, 'auditoria_usuarios', 'auditoria_id', 'user_id');
+        return $this->belongsToMany(User::class, 'auditoria_users', 'auditoria_id', 'user_id');
     }
 
     public function checklists()

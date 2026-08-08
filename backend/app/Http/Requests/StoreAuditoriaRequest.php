@@ -13,12 +13,14 @@ class StoreAuditoriaRequest extends FormRequest
 
     public function rules(): array
     {
+        $esActualizacion = $this->isMethod('patch') || $this->isMethod('put');
+
         return [
-            'titulo' => 'required|string|max:255',
+            'titulo' => [$esActualizacion ? 'sometimes' : 'required', 'string', 'max:255'],
             'objetivo' => 'nullable|string',
             'alcance' => 'nullable|string',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'fecha_inicio' => [$esActualizacion ? 'sometimes' : 'required', 'date'],
+            'fecha_fin' => [$esActualizacion ? 'sometimes' : 'required', 'date', 'after_or_equal:fecha_inicio'],
             'auditor_lider_id' => 'nullable|exists:users,id',
             'estado' => 'in:Borrador,Planificada,En Ejecución,En Revisión de Informe,Cerrada',
             'equipo_auditor' => 'nullable|array',

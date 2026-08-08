@@ -14,10 +14,11 @@ class StoreChecklistRequest extends FormRequest
 
     public function rules(): array
     {
+        $esActualizacion = $this->isMethod('patch') || $this->isMethod('put');
         return [
-            'auditoria_id' => 'required|exists:auditorias,id',
+            'auditoria_id' => [$esActualizacion ? 'sometimes' : 'required', 'exists:auditorias,id'],
             'requisito_iso_id' => [
-                'required',
+                $esActualizacion ? 'sometimes' : 'required',
                 'exists:requisito_isos,id',
                 function ($attribute, $value, $fail) {
                     $requisito = RequisitoIso::find($value);
@@ -26,7 +27,7 @@ class StoreChecklistRequest extends FormRequest
                     }
                 },
             ],
-            'estado_cumplimiento' => 'required|in:Conforme,No Conforme Mayor,No Conforme Menor,Oportunidad de Mejora,No Aplicable',
+            'estado_cumplimiento' => [$esActualizacion ? 'sometimes' : 'required', 'in:Conforme,No Conforme Mayor,No Conforme Menor,Oportunidad de Mejora,No Aplicable'],
             'observaciones' => 'nullable|string',
             'justificacion' => 'nullable|string',
         ];

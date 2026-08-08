@@ -7,6 +7,7 @@ use App\Models\AccionCorrectiva;
 use App\Models\Hallazgo;
 use App\Http\Requests\StoreAccionCorrectivaRequest;
 use App\Http\Resources\AccionCorrectivaResource;
+use App\Services\AuditoriaService;
 
 class AccionCorrectivaController extends Controller
 {
@@ -76,6 +77,11 @@ class AccionCorrectivaController extends Controller
                     'message' => 'RN-AC-02: Solo un Auditor Líder o auditor designado puede verificar la efectividad de la acción.'
                 ], 403);
             }
+
+            AuditoriaService::log('ACCION_CORRECTIVA_VERIFICADA', [
+                'accion_id' => $accion->id,
+                'verificado_por' => $request->user()->id,
+            ]);
 
             $data['verificado_por'] = $request->user()->id;
         }

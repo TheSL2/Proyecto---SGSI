@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\AuditoriaService;
 
 class InformeController extends Controller
 {
@@ -42,6 +43,7 @@ class InformeController extends Controller
                 'hallazgos_pendientes' => $sinAccion->pluck('id'),
             ], 422);
         }
+        AuditoriaService::log('INFORME_GENERADO', ['auditoria_id' => $auditoria->id]);
 
         $pdf = Pdf::loadView('informes.auditoria', compact('auditoria', 'hallazgos'))->setPaper('letter');
         return $pdf->download("informe-auditoria-{$auditoria->id}.pdf");

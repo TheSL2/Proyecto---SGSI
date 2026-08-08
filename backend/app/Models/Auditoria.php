@@ -28,4 +28,14 @@ class Auditoria extends Model
     {
         return $this->belongsToMany(Area::class, 'auditoria_areas');
     }
+    
+    public function equipoAuditor()
+    {
+        return $this->belongsToMany(User::class, 'auditoria_usuarios', 'auditoria_id', 'user_id');
+    }
+
+    public function checklists()
+    {
+        return $this->hasMany(ChecklistAuditoria::class, 'auditoria_id');
+    }
 }

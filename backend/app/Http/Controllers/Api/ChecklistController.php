@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ChecklistAuditoria;
 use App\Http\Requests\StoreChecklistRequest;
+use App\Http\Resources\ChecklistAuditoriaResource;
 
 class ChecklistController extends Controller
 {
     public function index()
     {
         $checklist = ChecklistAuditoria::with(['auditoria', 'requisitoIso'])->get();
-        return response()->json($checklist, 200);
+        return ChecklistAuditoriaResource::collection($checklist);
     }
 
     public function store(StoreChecklistRequest $request)

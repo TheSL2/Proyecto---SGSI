@@ -13,6 +13,7 @@ return new class extends Migration
             $table->enum('categoria', ['Clausula', 'Anexo A']);
             $table->string('codigo');
             $table->string('descripcion');
+            $table->boolean('aplicable')->default(true);
             $table->text('orientacion_implementacion')->nullable();
             $table->timestamps();
         });

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('evidencias', function (Blueprint $table) {
             $table->id();
             $table->foreignId('checklist_id')->nullable()->constrained('checklist_auditorias')->onDelete('cascade');
+            $table->foreignId('hallazgo_id')->nullable()->constrained('hallazgos')->onDelete('cascade');
             $table->string('nombre_archivo');
             $table->string('ruta_almacenamiento');
             $table->string('hash_sha256');

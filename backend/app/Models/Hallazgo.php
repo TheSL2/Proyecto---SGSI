@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Auditoria;
 use App\Models\ChecklistAuditoria;
 use App\Models\AccionCorrectiva;
 
@@ -13,18 +12,14 @@ class Hallazgo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'auditoria_id',
         'checklist_id',
         'tipo_hallazgo',
+        'clausula_o_control',
         'descripcion',
-        'evidencia_objetiva',
         'estado',
+        'fecha_notificacion',
+        'estado_notificacion',
     ];
-
-    public function auditoria()
-    {
-        return $this->belongsTo(Auditoria::class, 'auditoria_id');
-    }
 
     public function checklist()
     {

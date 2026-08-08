@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RequisitoIso;
 use App\Models\Auditoria;
+use App\Models\Hallazgo;
 
 class ChecklistAuditoria extends Model
 {
@@ -27,5 +28,10 @@ class ChecklistAuditoria extends Model
     public function auditoria()
     {
         return $this->belongsTo(Auditoria::class, 'auditoria_id');
+    }
+
+    public function hallazgos()
+    {
+        return $this->hasMany(Hallazgo::class, 'checklist_id');
     }
 }

@@ -10,12 +10,13 @@ return new class extends Migration
     {
         Schema::create('hallazgos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('auditoria_id')->constrained('auditorias')->onDelete('cascade');
-            $table->foreignId('checklist_id')->nullable()->constrained('checklist_auditorias')->onDelete('cascade');
+            $table->foreignId('checklist_id')->constrained('checklist_auditorias')->onDelete('cascade');
             $table->enum('tipo_hallazgo', ['No Conforme Mayor', 'No Conforme Menor', 'Oportunidad de Mejora', 'Observacion']);
+            $table->string('clausula_o_control', 100);
             $table->text('descripcion');
-            $table->text('evidencia_objetiva')->nullable();
             $table->enum('estado', ['Abierto', 'En Proceso', 'Cerrado'])->default('Abierto');
+            $table->timestamp('fecha_notificacion')->nullable();
+            $table->enum('estado_notificacion', ['Pendiente', 'Notificado', 'Aceptado'])->default('Pendiente');
             $table->timestamps();
         });
     }

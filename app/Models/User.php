@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'rol',
         'activo',
+        'area_id',
         'google2fa_secret',
         'google2fa_enabled',
     ];
@@ -24,6 +25,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'google2fa_secret',
     ];
 
     protected function casts(): array
@@ -34,5 +36,15 @@ class User extends Authenticatable
             'activo' => 'boolean',
             'google2fa_enabled' => 'boolean',
         ];
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function tieneConflictoDeInteres(int $areaEvaluadaId): bool
+    {
+        return $this->area_id !== null && $this->area_id === $areaEvaluadaId;
     }
 }

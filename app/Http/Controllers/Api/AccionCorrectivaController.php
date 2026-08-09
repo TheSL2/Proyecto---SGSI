@@ -29,7 +29,9 @@ class AccionCorrectivaController extends Controller
         }
 
         $accion = AccionCorrectiva::create($data);
-        return response()->json($accion->load(['hallazgo', 'responsable', 'evidenciaCierre']), 201);
+        return (new AccionCorrectivaResource($accion->load(['hallazgo', 'responsable', 'evidenciaCierre'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show($id)
@@ -38,7 +40,7 @@ class AccionCorrectivaController extends Controller
         if (!$accion) {
             return response()->json(['message' => 'Acción Correctiva no encontrada'], 404);
         }
-        return response()->json($accion, 200);
+        return new AccionCorrectivaResource($accion);
     }
 
     public function update(StoreAccionCorrectivaRequest $request, $id)
@@ -87,7 +89,7 @@ class AccionCorrectivaController extends Controller
         }
 
         $accion->update($data);
-        return response()->json($accion->load(['hallazgo', 'responsable', 'evidenciaCierre', 'verificadoPor']), 200);
+        return new AccionCorrectivaResource($accion->load(['hallazgo', 'responsable', 'evidenciaCierre', 'verificadoPor']));
     }
 
     public function destroy($id)

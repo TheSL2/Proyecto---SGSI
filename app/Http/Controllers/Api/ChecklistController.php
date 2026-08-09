@@ -26,7 +26,9 @@ class ChecklistController extends Controller
         }
 
         $item = ChecklistAuditoria::create($data);
-        return response()->json($item->load(['auditoria', 'requisitoIso']), 201);
+        return (new ChecklistAuditoriaResource($item->load(['auditoria', 'requisitoIso'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show($id)
@@ -35,7 +37,7 @@ class ChecklistController extends Controller
         if (!$item) {
             return response()->json(['message' => 'Ítem no encontrado'], 404);
         }
-        return response()->json($item, 200);
+        return new ChecklistAuditoriaResource($item);
     }
 
     public function update(StoreChecklistRequest $request, $id)
@@ -54,7 +56,7 @@ class ChecklistController extends Controller
         }
 
         $item->update($data);
-        return response()->json($item->load(['auditoria', 'requisitoIso']), 200);
+        return new ChecklistAuditoriaResource($item->load(['auditoria', 'requisitoIso']));
     }
 
     public function destroy($id)

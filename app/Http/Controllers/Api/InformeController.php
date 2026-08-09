@@ -33,6 +33,16 @@ class InformeController extends Controller
             ], 422);
         }
 
+        $checklistsSinHallazgo = $auditoria->checklists
+            ->filter(fn ($c) => in_array($c->estado_cumplimiento, ['No Conforme Mayor', 'No Conforme Menor'])
+                && $c->hallazgos->isEmpty());
+
+        if ($checklistsSinHallazgo->isNotEmpty()) {
+            return response()->json([
+                'message' => 'RN-CK-02: Todo ítem de checklist marcado como No Conforme Mayor o No Conforme Menor debe tener un Hallazgo vinculado.',
+                'checklist_pendientes' => $checklistsSinHallazgo->pluck('id'),
+            ], 422);
+        }
 
         $hallazgos = $auditoria->checklists->flatMap->hallazgos;
         $sinAccion = $hallazgos->filter(fn ($h) => $h->accionesCorrectivas->isEmpty());

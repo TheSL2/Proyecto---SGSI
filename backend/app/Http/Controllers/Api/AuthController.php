@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\IntentosLoginSospechosos;
 
 class AuthController extends Controller
 {
@@ -44,7 +46,16 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        $key = 'login-attempts:' . $request->ip() . ':' . strtolower($request->email);
+
         if (!Auth::attempt($request->only('email', 'password'))) {
+            RateLimiter::hit($key, 300);
+
+            if (RateLimiter::attempts($key) >= 3) {
+                $userExistente = User::where('email', $request->email)->first();
+                $userExistente?->notify(new IntentosLoginSospechosos($request->ip()));
+            }
+
             return response()->json([
                 'message' => 'Credenciales inválidas'
             ], 401);
@@ -57,6 +68,8 @@ class AuthController extends Controller
                 'message' => 'Usuario desactivado en el sistema.'
             ], 403);
         }
+
+        RateLimiter::clear($key); 
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

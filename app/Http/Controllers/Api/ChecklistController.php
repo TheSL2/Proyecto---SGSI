@@ -49,7 +49,7 @@ class ChecklistController extends Controller
 
         $data = $request->validated();
 
-        if ($data['estado_cumplimiento'] === 'No Aplicable' && empty($data['justificacion'])) {
+        if (isset($data['estado_cumplimiento']) && $data['estado_cumplimiento'] === 'No Aplicable' && empty($data['justificacion'])) {
             return response()->json([
                 'message' => 'RN-CHECK LIST-01: Si un control se marca como No Aplicable, es obligatorio registrar la justificación técnica.'
             ], 422);

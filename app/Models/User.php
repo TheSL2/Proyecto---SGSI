@@ -17,6 +17,8 @@ class User extends Authenticatable
         'password',
         'rol',
         'activo',
+        'google2fa_secret',
+        'google2fa_enabled',
     ];
 
     protected $hidden = [
@@ -30,6 +32,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'activo' => 'boolean',
+            'google2fa_enabled' => 'boolean',
         ];
     }
 }

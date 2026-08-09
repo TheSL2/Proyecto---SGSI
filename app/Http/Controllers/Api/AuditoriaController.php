@@ -10,6 +10,30 @@ use Illuminate\Http\Request;
 
 class AuditoriaController extends Controller
 {
+    private const FLUJO_ESTADOS = [
+        'Borrador',
+        'Planificada',
+        'En Ejecución',
+        'En Revisión de Informe',
+        'Cerrada',
+    ];
+
+    private function transicionEsValida(string $actual, string $nuevo): bool
+    {
+        if ($actual === $nuevo) {
+            return true;
+        }
+
+        $indiceActual = array_search($actual, self::FLUJO_ESTADOS);
+        $indiceNuevo = array_search($nuevo, self::FLUJO_ESTADOS);
+
+        if ($indiceActual === false || $indiceNuevo === false) {
+            return false;
+        }
+
+        return $indiceNuevo === $indiceActual + 1;
+    }
+
     public function index()
     {
         $auditorias = Auditoria::with(['auditorLider', 'areas'])->get();
@@ -68,6 +92,13 @@ class AuditoriaController extends Controller
 
         $data = $request->validated();
 
+        if (isset($data['estado']) && ! $this->transicionEsValida($auditoria->estado, $data['estado'])) {
+            return response()->json([
+                'message' => "RN-PA-03: No se puede pasar de '{$auditoria->estado}' a '{$data['estado']}'. El flujo debe respetar el orden: "
+                    . implode(' → ', self::FLUJO_ESTADOS) . '.',
+            ], 422);
+        }
+
         if (($data['estado'] ?? $auditoria->estado) === 'Planificada') {
             $objetivo = $data['objetivo'] ?? $auditoria->objetivo;
             $alcance = $data['alcance'] ?? $auditoria->alcance;
@@ -85,8 +116,13 @@ class AuditoriaController extends Controller
             }
         }
 
-        if (($data['estado'] ?? 'Borrador') === 'En Ejecución') {
-            if (empty($data['auditor_lider_id']) || empty($data['equipo_auditor'])) {
+        if (($data['estado'] ?? $auditoria->estado) === 'En Ejecución') {
+            $lider = $data['auditor_lider_id'] ?? $auditoria->auditor_lider_id;
+            $tieneEquipo = $request->has('equipo_auditor')
+                ? !empty($request->input('equipo_auditor'))
+                : $auditoria->equipoAuditor()->exists();
+
+            if (empty($lider) || !$tieneEquipo) {
                 return response()->json(['message' => 'RN-PA-02: Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
             }
         }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\IntentosLoginSospechosos;
+use App\Services\AuditoriaService;
 
 class AuthController extends Controller
 {
@@ -51,6 +52,8 @@ class AuthController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))) {
             RateLimiter::hit($key, 300);
 
+            AuditoriaService::log('LOGIN_FALLIDO', ['email_intento' => $request->email]);   
+
             if (RateLimiter::attempts($key) >= 3) {
                 $userExistente = User::where('email', $request->email)->first();
                 $userExistente?->notify(new IntentosLoginSospechosos($request->ip()));
@@ -64,6 +67,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
 
         if (!$user->activo) {
+            AuditoriaService::log('LOGIN_BLOQUEADO_INACTIVO', ['email' => $user->email]);
             return response()->json([
                 'message' => 'Usuario desactivado en el sistema.'
             ], 403);
@@ -72,6 +76,8 @@ class AuthController extends Controller
         RateLimiter::clear($key); 
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        AuditoriaService::log('LOGIN_EXITOSO', ['email' => $user->email]);
 
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
@@ -83,6 +89,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        AuditoriaService::log('LOGOUT', ['email' => $request->user()->email]);
+
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([

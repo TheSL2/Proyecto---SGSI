@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreEvidenciaRequest;
 use App\Http\Resources\EvidenciaResource;
+use App\Services\AuditoriaService;
 
 class EvidenciaController extends Controller
 {
@@ -48,6 +49,7 @@ class EvidenciaController extends Controller
 
     public function destroy(Request $request, $id)
     {
+
         $evidencia = Evidencia::with(['checklist.auditoria', 'hallazgo.checklist.auditoria'])->find($id);
 
         if (!$evidencia) {
@@ -64,6 +66,8 @@ class EvidenciaController extends Controller
 
         Storage::disk('public')->delete($evidencia->ruta_almacenamiento);
         $evidencia->delete();
+
+        AuditoriaService::log('EVIDENCIA_ELIMINADA', ['evidencia_id' => $evidencia->id]);
 
         return response()->json(['message' => 'Evidencia eliminada correctamente'], 200);
     }

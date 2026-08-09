@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class AuditoriaController extends Controller
 {
-    // RN-PA-03: flujo estricto de estados, sin saltos ni retrocesos.
     private const FLUJO_ESTADOS = [
         'Borrador',
         'Planificada',
@@ -23,7 +22,7 @@ class AuditoriaController extends Controller
     private function transicionEsValida(string $actual, string $nuevo): bool
     {
         if ($actual === $nuevo) {
-            return true; // sin cambio de estado, no aplica la regla
+            return true;
         }
 
         $indiceActual = array_search($actual, self::FLUJO_ESTADOS);
@@ -36,10 +35,6 @@ class AuditoriaController extends Controller
         return $indiceNuevo === $indiceActual + 1;
     }
 
-    /**
-     * RN-USUARIOS Y ROLES-01: ningun usuario puede auditar (como lider o
-     * parte del equipo) un area que su propia auditoria este evaluando.
-     */
     private function usuariosEnConflicto(array $areasIds, array $candidatosIds)
     {
         $areasIds = array_filter($areasIds);
@@ -92,7 +87,7 @@ class AuditoriaController extends Controller
             ], 422);
         }
 
-        $auditoria = Auditoria::create($data);
+        $auditoria = Auditoria::create($data)->fresh();
 
         if ($request->has('areas')) {
             $auditoria->areas()->sync($request->areas);
@@ -101,7 +96,9 @@ class AuditoriaController extends Controller
             $auditoria->equipoAuditor()->sync($request->equipo_auditor);
         }
 
-        return new AuditoriaResource($auditoria->load(['auditorLider', 'areas', 'equipoAuditor']));
+        return (new AuditoriaResource($auditoria->load(['auditorLider', 'areas', 'equipoAuditor'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show($id)

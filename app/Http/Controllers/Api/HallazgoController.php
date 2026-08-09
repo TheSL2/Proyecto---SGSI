@@ -23,7 +23,9 @@ class HallazgoController extends Controller
 
         $hallazgo = Hallazgo::create($data);
 
-        return response()->json($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas']), 201);
+        return (new HallazgoResource($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show($id)
@@ -32,8 +34,8 @@ class HallazgoController extends Controller
         if (!$hallazgo) {
             return response()->json(['message' => 'Hallazgo no encontrado'], 404);
         }
-        
-        return response()->json($hallazgo, 200);
+
+        return new HallazgoResource($hallazgo);
     }
 
     public function update(StoreHallazgoRequest $request, $id)
@@ -46,7 +48,7 @@ class HallazgoController extends Controller
         $data = $request->validated();
         
         $hallazgo->update($data);
-        return response()->json($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas']), 200);
+        return new HallazgoResource($hallazgo->load(['checklist.auditoria', 'accionesCorrectivas']));
     }
 
     public function destroy($id)

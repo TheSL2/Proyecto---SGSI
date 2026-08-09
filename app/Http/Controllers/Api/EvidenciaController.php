@@ -35,7 +35,9 @@ class EvidenciaController extends Controller
             'subido_por' => $request->user()->id,
         ]);
 
-        return response()->json($evidencia->load(['checklist', 'hallazgo', 'usuario']), 201);
+        return (new EvidenciaResource($evidencia->load(['checklist', 'hallazgo', 'usuario'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show($id)
@@ -44,7 +46,7 @@ class EvidenciaController extends Controller
         if (!$evidencia) {
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
-        return response()->json($evidencia, 200);
+        return new EvidenciaResource($evidencia);
     }
 
     public function destroy(Request $request, $id)

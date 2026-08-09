@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     
     Route::apiResource('checklists', ChecklistController::class);
 
-    Route::apiResource('evidencias', EvidenciaController::class);
+    Route::apiResource('evidencias', EvidenciaController::class)->except(['update']);
 
     Route::apiResource('hallazgos', HallazgoController::class);
 

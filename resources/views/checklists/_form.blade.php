@@ -52,7 +52,7 @@
         </label>
         <textarea x-model="form.justificacion" rows="3" class="w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
         <p class="text-xs text-gray-400 mt-1" x-show="requiereJustificacion" x-cloak>
-            {{ __('RN-CHECK LIST-01: obligatoria cuando el estado es "No Aplicable".') }}
+            {{ __('Obligatoria cuando el estado es "No Aplicable".') }}
         </p>
     </div>
 

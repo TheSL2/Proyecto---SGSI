@@ -17,7 +17,7 @@
             @endforeach
         </select>
         <p class="text-xs text-gray-400 mt-1">
-            {{ __('RN-HL-02: el hallazgo debe originarse de un ítem de checklist evaluado, del cual hereda la trazabilidad a la auditoría y al requisito ISO.') }}
+            {{ __('El hallazgo debe originarse de un ítem de checklist evaluado, del cual hereda la trazabilidad a la auditoría y al requisito ISO.') }}
         </p>
     </div>
 
@@ -64,7 +64,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Fecha de notificación') }}</label>
         <input type="date" x-model="form.fecha_notificacion" class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
         <p class="text-xs text-gray-400 mt-1">
-            {{ __('RN-HL-03: el auditado tiene 5 días hábiles desde el cierre de campo para aceptar la notificación.') }}
+            {{ __('El auditado tiene 5 días hábiles desde el cierre de campo para aceptar la notificación.') }}
         </p>
     </div>
 

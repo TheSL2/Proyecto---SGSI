@@ -72,7 +72,7 @@
             </div>
 
             <p class="text-xs text-gray-400">
-                {{ __('RN-UR-02: desactivar un usuario no borra su histórico de auditorías/hallazgos pasados, solo le impide iniciar sesión de nuevo.') }}
+                {{ __('Desactivar un usuario no borra su histórico de auditorías/hallazgos pasados, solo le impide iniciar sesión de nuevo.') }}
             </p>
 
         </div>

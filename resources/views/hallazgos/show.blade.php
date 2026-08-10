@@ -80,7 +80,7 @@
                     </div>
 
                     <div x-show="sinAccionCorrectiva" x-cloak class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md p-3">
-                        {{ __('RN-HL-01: esta No Conformidad todavía no tiene ningún plan de acción correctiva asignado.') }}
+                        {{ __('Esta No Conformidad todavía no tiene ningún plan de acción correctiva asignado.') }}
                     </div>
 
                     <ul class="divide-y divide-gray-100" x-show="!sinAccionCorrectiva" x-cloak>

@@ -61,16 +61,16 @@ class AuditoriaController extends Controller
 
         if (($data['estado'] ?? 'Borrador') === 'Planificada') {
             if (empty($data['objetivo']) || empty($data['alcance'])) {
-                return response()->json(['message' => 'RN-PLAN ANUAL-01: Se requiere Objetivo y Alcance para pasar al estado Planificada.'], 422);
+                return response()->json(['message' => 'Se requiere Objetivo y Alcance para pasar al estado Planificada.'], 422);
             }
             if (empty($data['auditor_lider_id'])) {
-                return response()->json(['message' => 'RN-PA-02: Se requiere asignar un Auditor Líder para planificar la auditoría.'], 422);
+                return response()->json(['message' => 'Se requiere asignar un Auditor Líder para planificar la auditoría.'], 422);
             }
         }
 
         if (($data['estado'] ?? 'Borrador') === 'En Ejecución') {
             if (empty($data['auditor_lider_id']) || empty($data['equipo_auditor'])) {
-                return response()->json(['message' => 'RN-PA-02: Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
+                return response()->json(['message' => 'Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
             }
         }
 
@@ -82,7 +82,7 @@ class AuditoriaController extends Controller
 
         if ($conflicto->isNotEmpty()) {
             return response()->json([
-                'message' => 'RN-USUARIOS Y ROLES-01: Un usuario no puede auditar (como líder o parte del equipo) un área a la que pertenece.',
+                'message' => 'Un usuario no puede auditar (como líder o parte del equipo) un área a la que pertenece.',
                 'usuarios_en_conflicto' => $conflicto,
             ], 422);
         }
@@ -124,7 +124,7 @@ class AuditoriaController extends Controller
 
         if (isset($data['estado']) && ! $this->transicionEsValida($auditoria->estado, $data['estado'])) {
             return response()->json([
-                'message' => "RN-PA-03: No se puede pasar de '{$auditoria->estado}' a '{$data['estado']}'. El flujo debe respetar el orden: "
+                'message' => "No se puede pasar de '{$auditoria->estado}' a '{$data['estado']}'. El flujo debe respetar el orden: "
                     . implode(' → ', self::FLUJO_ESTADOS) . '.',
             ], 422);
         }
@@ -136,12 +136,12 @@ class AuditoriaController extends Controller
 
             if (empty($objetivo) || empty($alcance)) {
                 return response()->json([
-                    'message' => 'RN-PLAN ANUAL-01: Toda auditoría planificada debe incluir Objetivo y Alcance.'
+                    'message' => 'Toda auditoría planificada debe incluir Objetivo y Alcance.'
                 ], 422);
             }
             if (empty($lider)) {
                 return response()->json([
-                    'message' => 'RN-PA-02: Una auditoría no puede iniciar/planificarse sin un Auditor Líder.'
+                    'message' => 'Una auditoría no puede iniciar/planificarse sin un Auditor Líder.'
                 ], 422);
             }
         }
@@ -153,7 +153,7 @@ class AuditoriaController extends Controller
                 : $auditoria->equipoAuditor()->exists();
 
             if (empty($lider) || !$tieneEquipo) {
-                return response()->json(['message' => 'RN-PA-02: Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
+                return response()->json(['message' => 'Una auditoría no puede iniciar sin un Auditor Líder y al menos un equipo auditor asignado.'], 422);
             }
         }
 
@@ -171,7 +171,7 @@ class AuditoriaController extends Controller
 
         if ($conflicto->isNotEmpty()) {
             return response()->json([
-                'message' => 'RN-USUARIOS Y ROLES-01: Un usuario no puede auditar (como líder o parte del equipo) un área a la que pertenece.',
+                'message' => 'Un usuario no puede auditar (como líder o parte del equipo) un área a la que pertenece.',
                 'usuarios_en_conflicto' => $conflicto,
             ], 422);
         }

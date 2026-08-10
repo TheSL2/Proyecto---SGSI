@@ -47,7 +47,7 @@
                         class="w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                     >
                     <p class="text-xs text-gray-400 mt-1">
-                        {{ __('RN-EV-01: PDF, PNG, JPG, XLSX o DOCX, máximo 10MB. Se calcula un hash SHA-256 al subir (RN-EV-03).') }}
+                        {{ __('PDF, PNG, JPG, XLSX o DOCX, máximo 10MB.') }}
                     </p>
                 </div>
 

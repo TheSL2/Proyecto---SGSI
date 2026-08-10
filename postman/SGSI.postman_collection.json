@@ -1,0 +1,1509 @@
+{
+	"info": {
+		"_postman_id": "90fdc1dd-90c7-4f05-958a-c96c95b70b4a",
+		"name": "SGSI",
+		"description": "Coleccion de pruebas para el backend Laravel del Proyecto Integrador. Cubre M1 (auth) y M2 (CRUD + reglas de negocio). Usa el environment 'SGSI Local' para las variables base_url, token, etc.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "56130785",
+		"_collection_link": "https://omarsanluis50-2710436.postman.co/workspace/Omar-Sanluis's-Workspace~e1ccd80b-e575-4f50-842a-6614db02e152/collection/56130785-90fdc1dd-90c7-4f05-958a-c96c95b70b4a?action=share&source=collection_link&creator=56130785"
+	},
+	"item": [
+		{
+			"name": "01 - Auth",
+			"item": [
+				{
+					"name": "Register - usuario nuevo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Devuelve access_token\", function () { pm.expect(pm.response.json().access_token).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Usuario Postman\",\n    \"email\": \"postman.test@auditoria.com\",\n    \"password\": \"password123\",\n    \"rol\": \"Auditado\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register - email duplicado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae error de validacion de email\", function () { pm.expect(pm.response.json().errors.email).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Usuario Duplicado\",\n    \"email\": \"admin@auditoria.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - credenciales validas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Devuelve access_token\", function () { pm.expect(pm.response.json().access_token).to.be.a(\"string\"); });",
+									"if (pm.response.code === 200) { pm.environment.set(\"token\", pm.response.json().access_token); pm.environment.set(\"admin_user_id\", pm.response.json().user.id); }"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@auditoria.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - credenciales invalidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 401\", function () { pm.response.to.have.status(401); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae mensaje de credenciales invalidas\", function () { pm.expect(pm.response.json().message).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@auditoria.com\",\n    \"password\": \"password-incorrecta\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me - usuario autenticado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae id de usuario\", function () { const json = pm.response.json(); pm.expect(json.id).to.not.be.undefined; });",
+									"pm.test(\"El email coincide con el usuario logueado\", function () { pm.expect(pm.response.json().email).to.eql(\"admin@auditoria.com\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae mensaje de confirmacion\", function () { pm.expect(pm.response.json().message).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (re-login para el resto de la coleccion)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Guarda token de nuevo\", function () { const t = pm.response.json().access_token; pm.expect(t).to.be.a(\"string\"); pm.environment.set(\"token\", t); });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@auditoria.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02 - Auditorias",
+			"item": [
+				{
+					"name": "Auditorias - listar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"La respuesta viene envuelta en data como arreglo\", function () { pm.expect(pm.response.json().data).to.be.an(\"array\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auditorias",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - crear",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Estado inicial es Borrador\", function () { pm.expect(pm.response.json().data.estado).to.eql(\"Borrador\"); });",
+									"pm.environment.set(\"auditoria_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Auditoria de prueba Postman\",\n    \"fecha_inicio\": \"2026-09-01\",\n    \"fecha_fin\": \"2026-09-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auditorias",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"El id coincide con el solicitado\", function () { pm.expect(String(pm.response.json().data.id)).to.eql(String(pm.environment.get(\"auditoria_id\"))); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{auditoria_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{auditoria_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - RN-PA-03: salto de estado invalido (Borrador -> En Ejecucion)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Menciona RN-PA-03\", function () { pm.expect(pm.response.json().message).to.include(\"RN-PA-03\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"En Ejecución\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{auditoria_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{auditoria_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - RN-PLAN ANUAL-01: Planificada sin objetivo/alcance",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Menciona RN-PLAN ANUAL-01\", function () { pm.expect(pm.response.json().message).to.include(\"RN-PLAN ANUAL-01\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"Planificada\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{auditoria_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{auditoria_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - transicion valida a Planificada",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"El estado quedo en Planificada\", function () { pm.expect(pm.response.json().data.estado).to.eql(\"Planificada\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"objetivo\": \"Verificar cumplimiento del SGSI\",\n    \"alcance\": \"Area de pruebas Postman\",\n    \"auditor_lider_id\": \"{{admin_user_id}}\",\n    \"estado\": \"Planificada\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{auditoria_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{auditoria_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auditorias - eliminar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae mensaje de confirmacion\", function () { pm.expect(pm.response.json().message).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{auditoria_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{auditoria_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03 - Requisitos ISO",
+			"item": [
+				{
+					"name": "Requisitos ISO - listar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Es un arreglo con al menos 1 elemento\", function () { const json = pm.response.json(); const arr = json.data || json; pm.expect(arr.length).to.be.above(0); if ((json.data||json).length) { pm.environment.set(\"requisito_id\", (json.data||json)[0].id); } });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/requisito-isos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"requisito-isos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Requisitos ISO - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae el codigo del requisito\", function () { const json = pm.response.json(); pm.expect((json.data||json).codigo).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/requisito-isos/{{requisito_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"requisito-isos",
+								"{{requisito_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Requisitos ISO - actualizar aplicable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aplicable\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/requisito-isos/{{requisito_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"requisito-isos",
+								"{{requisito_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "04 - Checklists",
+			"item": [
+				{
+					"name": "Checklist - crear auditoria base para checklist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.environment.set(\"checklist_auditoria_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Auditoria base para checklist\",\n    \"fecha_inicio\": \"2026-09-01\",\n    \"fecha_fin\": \"2026-09-10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auditorias",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checklist - RN-CHECK LIST-01: No Aplicable sin justificacion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Menciona RN-CHECK LIST-01\", function () { pm.expect(pm.response.json().message).to.include(\"RN-CHECK LIST-01\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"auditoria_id\": \"{{checklist_auditoria_id}}\",\n    \"requisito_iso_id\": \"{{requisito_id}}\",\n    \"estado_cumplimiento\": \"No Aplicable\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/checklists",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checklist - crear valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.environment.set(\"checklist_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"auditoria_id\": \"{{checklist_auditoria_id}}\",\n    \"requisito_iso_id\": \"{{requisito_id}}\",\n    \"estado_cumplimiento\": \"Conforme\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/checklists",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checklist - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae la auditoria anidada (Resource)\", function () { const json = pm.response.json(); pm.expect(json.data.auditoria).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/checklists/{{checklist_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists",
+								"{{checklist_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checklist - actualizar observaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Observaciones actualizadas\", function () { pm.expect(pm.response.json().data.observaciones).to.eql(\"Actualizado desde Postman\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"observaciones\": \"Actualizado desde Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/checklists/{{checklist_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists",
+								"{{checklist_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checklist - eliminar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/checklists/{{checklist_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists",
+								"{{checklist_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05 - Hallazgos",
+			"item": [
+				{
+					"name": "Hallazgos - crear checklist base (No Conforme Menor)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.environment.set(\"checklist_para_hallazgo_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"auditoria_id\": \"{{checklist_auditoria_id}}\",\n    \"requisito_iso_id\": \"{{requisito_id}}\",\n    \"estado_cumplimiento\": \"No Conforme Menor\",\n    \"justificacion\": \"N/A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/checklists",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checklists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hallazgos - crear",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.environment.set(\"hallazgo_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"checklist_id\": \"{{checklist_para_hallazgo_id}}\",\n    \"tipo_hallazgo\": \"No Conforme Menor\",\n    \"clausula_o_control\": \"A.5.1\",\n    \"descripcion\": \"Hallazgo de prueba desde Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/hallazgos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hallazgos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hallazgos - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae el checklist anidado\", function () { const json = pm.response.json(); pm.expect(json.data.checklist).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/hallazgos/{{hallazgo_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hallazgos",
+								"{{hallazgo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hallazgos - actualizar estado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Estado actualizado a En Proceso\", function () { pm.expect(pm.response.json().data.estado).to.eql(\"En Proceso\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"En Proceso\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/hallazgos/{{hallazgo_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hallazgos",
+								"{{hallazgo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hallazgos - listar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/hallazgos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hallazgos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "06 - Acciones Correctivas",
+			"item": [
+				{
+					"name": "Acciones Correctivas - RN-AC-01: sin causa_raiz para No Conformidad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Menciona RN-AC-01\", function () { pm.expect(pm.response.json().message).to.include(\"RN-AC-01\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hallazgo_id\": \"{{hallazgo_id}}\",\n    \"descripcion_accion\": \"Accion sin causa raiz\",\n    \"responsable_id\": \"{{admin_user_id}}\",\n    \"fecha_limite\": \"2026-10-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/acciones-correctivas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"acciones-correctivas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acciones Correctivas - crear valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.environment.set(\"accion_id\", pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hallazgo_id\": \"{{hallazgo_id}}\",\n    \"causa_raiz\": \"Falta de politica documentada\",\n    \"descripcion_accion\": \"Redactar politica de control de acceso\",\n    \"responsable_id\": \"{{admin_user_id}}\",\n    \"fecha_limite\": \"2026-10-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/acciones-correctivas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"acciones-correctivas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acciones Correctivas - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae el responsable anidado\", function () { const json = pm.response.json(); pm.expect(json.data.responsable).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/acciones-correctivas/{{accion_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"acciones-correctivas",
+								"{{accion_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acciones Correctivas - RN-AC-02: responsable no puede verificar su propio cierre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 403\", function () { pm.response.to.have.status(403); });",
+									"pm.test(\"Menciona RN-AC-02\", function () { pm.expect(pm.response.json().message).to.include(\"RN-AC-02\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"Verificada\",\n    \"evidencia_cierre_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/acciones-correctivas/{{accion_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"acciones-correctivas",
+								"{{accion_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acciones Correctivas - listar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/acciones-correctivas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"acciones-correctivas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "07 - Evidencias",
+			"item": [
+				{
+					"name": "Evidencias - crear (subir archivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code es 201\", function () { pm.response.to.have.status(201); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae hash_sha256\", function () { pm.expect(pm.response.json().data.hash_sha256).to.be.a(\"string\"); });",
+									"pm.environment.set(\"evidencia_id\", pm.response.json().data.id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "checklist_id",
+									"value": "{{checklist_para_hallazgo_id}}",
+									"type": "text"
+								},
+								{
+									"key": "hallazgo_id",
+									"value": "{{hallazgo_id}}",
+									"type": "text"
+								},
+								{
+									"key": "archivo",
+									"type": "file",
+									"src": "postman-cloud:///1f192114-22ea-4ad0-8a4b-b38468321377"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/evidencias",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evidencias"
+							]
+						},
+						"description": "IMPORTANTE: en la pestana Body > form-data, selecciona un archivo real en el campo 'archivo' antes de correr esta request (Postman no permite adjuntar archivos automaticamente via script)."
+					},
+					"response": []
+				},
+				{
+					"name": "Evidencias - ver detalle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae la url publica del archivo\", function () { const json = pm.response.json(); pm.expect(json.data.url).to.not.be.undefined; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/evidencias/{{evidencia_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evidencias",
+								"{{evidencia_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Evidencias - listar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/evidencias",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evidencias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Evidencias - eliminar (auditoria en Borrador, deberia permitir)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Trae mensaje de confirmacion\", function () { pm.expect(pm.response.json().message).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/evidencias/{{evidencia_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evidencias",
+								"{{evidencia_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "08 - Dashboard e Informes",
+			"item": [
+				{
+					"name": "Dashboard - resumen ejecutivo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });",
+									"pm.test(\"Tiempo de respuesta < 2000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/dashboard/resumen",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"resumen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Informe - RN-INFORMES-01: auditoria no Cerrada/En Revision",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Menciona RN-INFORMES-01\", function () { pm.expect(pm.response.json().message).to.include(\"RN-INFORMES-01\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auditorias/{{checklist_auditoria_id}}/informe",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"{{checklist_auditoria_id}}",
+								"informe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Informe - auditoria inexistente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code es 404\", function () { pm.response.to.have.status(404); });",
+									"pm.test(\"Respuesta es JSON\", function () { pm.response.to.be.json; });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auditorias/999999/informe",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auditorias",
+								"999999",
+								"informe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Sin este header, Sanctum/Laravel redirige a las vistas de Breeze en vez de",
+					"// responder JSON puro cuando no hay sesion/token valido. Se aplica a TODA la coleccion.",
+					"pm.request.headers.add({ key: 'Accept', value: 'application/json' });"
+				]
+			}
+		}
+	]
+}

@@ -64,7 +64,7 @@ class EvidenciaController extends Controller
 
         if (in_array($estadoAuditoria, ['En Ejecución', 'En Revisión de Informe', 'Cerrada']) && $request->user()->rol !== 'Administrador') {
             return response()->json([
-                'message' => 'RN-EV-02: Inmutabilidad garantizada. No se pueden eliminar evidencias de auditorías en ejecución o posteriores.'
+                'message' => 'Inmutabilidad garantizada. No se pueden eliminar evidencias de auditorías en ejecución o posteriores.'
             ], 403);
         }
 

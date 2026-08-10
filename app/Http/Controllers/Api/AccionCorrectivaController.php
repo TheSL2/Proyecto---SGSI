@@ -24,7 +24,7 @@ class AccionCorrectivaController extends Controller
 
         if (in_array($hallazgo->tipo_hallazgo, ['No Conforme Mayor', 'No Conforme Menor']) && empty($data['causa_raiz'])) {
             return response()->json([
-                'message' => 'RN-AC-01: Es obligatorio registrar el Análisis de Causa Raíz para No Conformidades.'
+                'message' => 'Es obligatorio registrar el Análisis de Causa Raíz para No Conformidades.'
             ], 422);
         }
 
@@ -55,7 +55,7 @@ class AccionCorrectivaController extends Controller
 
         if (in_array($hallazgo->tipo_hallazgo, ['No Conforme Mayor', 'No Conforme Menor']) && empty($data['causa_raiz'] ?? $accion->causa_raiz)) {
             return response()->json([
-                'message' => 'RN-AC-01: Es obligatorio registrar el Análisis de Causa Raíz para No Conformidades.'
+                'message' => 'Es obligatorio registrar el Análisis de Causa Raíz para No Conformidades.'
             ], 422);
         }
 
@@ -70,13 +70,13 @@ class AccionCorrectivaController extends Controller
 
             if ($request->user()->id === $accion->responsable_id) {
                 return response()->json([
-                    'message' => 'RN-AC-02: El responsable de la acción no puede verificar su propio cierre.'
+                    'message' => 'El responsable de la acción no puede verificar su propio cierre.'
                 ], 403);
             }
 
             if (!in_array($request->user()->rol, ['Auditor', 'Consultor', 'Administrador'])) {
                 return response()->json([
-                    'message' => 'RN-AC-02: Solo un Auditor Líder o auditor designado puede verificar la efectividad de la acción.'
+                    'message' => 'Solo un Auditor Líder o auditor designado puede verificar la efectividad de la acción.'
                 ], 403);
             }
 

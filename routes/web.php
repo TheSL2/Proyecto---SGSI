@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\TwoFactorController;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Area;
 use App\Models\User;
 use App\Models\RequisitoIso;
@@ -11,7 +12,7 @@ use App\Models\ChecklistAuditoria;
 use App\Models\Hallazgo;
 
 Route::get('/', function () {
-    return view('welcome');
+    return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {

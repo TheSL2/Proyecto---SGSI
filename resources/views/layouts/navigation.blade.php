@@ -15,6 +15,18 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('web.auditorias.index')" :active="request()->routeIs('web.auditorias.*')">
+                        {{ __('Auditorías') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.checklists.index')" :active="request()->routeIs('web.checklists.*')">
+                        {{ __('Checklists') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.hallazgos.index')" :active="request()->routeIs('web.hallazgos.*')">
+                        {{ __('Hallazgos') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.acciones-correctivas.index')" :active="request()->routeIs('web.acciones-correctivas.*')">
+                        {{ __('Acciones Correctivas') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +81,18 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.auditorias.index')" :active="request()->routeIs('web.auditorias.*')">
+                {{ __('Auditorías') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.checklists.index')" :active="request()->routeIs('web.checklists.*')">
+                {{ __('Checklists') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.hallazgos.index')" :active="request()->routeIs('web.hallazgos.*')">
+                {{ __('Hallazgos') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.acciones-correctivas.index')" :active="request()->routeIs('web.acciones-correctivas.*')">
+                {{ __('Acciones Correctivas') }}
             </x-responsive-nav-link>
         </div>
 

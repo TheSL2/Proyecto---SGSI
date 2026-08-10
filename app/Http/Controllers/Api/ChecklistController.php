@@ -33,7 +33,7 @@ class ChecklistController extends Controller
 
     public function show($id)
     {
-        $item = ChecklistAuditoria::with(['auditoria', 'requisitoIso'])->find($id);
+        $item = ChecklistAuditoria::with(['auditoria', 'requisitoIso', 'hallazgos', 'evidencias'])->find($id);
         if (!$item) {
             return response()->json(['message' => 'Ítem no encontrado'], 404);
         }

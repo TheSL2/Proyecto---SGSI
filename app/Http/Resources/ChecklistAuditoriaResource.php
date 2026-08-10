@@ -16,6 +16,8 @@ class ChecklistAuditoriaResource extends JsonResource
             'justificacion' => $this->justificacion,
             'auditoria' => new AuditoriaResource($this->whenLoaded('auditoria')),
             'requisito_iso' => new RequisitoIsoResource($this->whenLoaded('requisitoIso')),
+            'hallazgos' => HallazgoResource::collection($this->whenLoaded('hallazgos')),
+            'evidencias' => EvidenciaResource::collection($this->whenLoaded('evidencias')),
         ];
     }
 }

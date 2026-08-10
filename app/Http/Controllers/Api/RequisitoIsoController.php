@@ -31,6 +31,12 @@ class RequisitoIsoController extends Controller
             return response()->json(['message' => 'Requisito ISO no encontrado'], 404);
         }
 
+        if (!in_array($request->user()->rol, ['Consultor', 'Administrador'])) {
+            return response()->json([
+                'message' => 'Solo un Consultor o Administrador puede modificar la aplicabilidad de un requisito ISO.',
+            ], 403);
+        }
+
         $data = $request->validated();
 
         if (array_key_exists('aplicable', $data) && $data['aplicable'] === false) {

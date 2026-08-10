@@ -115,6 +115,33 @@ Route::middleware('auth')->group(function () {
         return view('acciones-correctivas.show', ['id' => $id]);
     })->name('web.acciones-correctivas.show');
 
+    Route::get('/evidencias', function () {
+        return view('evidencias.index');
+    })->name('web.evidencias.index');
+
+    Route::get('/evidencias/create', function () {
+        return view('evidencias.create', [
+            'checklists' => ChecklistAuditoria::with(['auditoria', 'requisitoIso'])->latest()->take(200)->get(),
+            'hallazgos' => Hallazgo::with(['checklist.auditoria'])->latest()->take(200)->get(),
+        ]);
+    })->name('web.evidencias.create');
+
+    Route::get('/evidencias/{id}', function (string $id) {
+        return view('evidencias.show', ['id' => $id]);
+    })->name('web.evidencias.show');
+
+    Route::get('/areas', function () {
+        return view('areas.index');
+    })->name('web.areas.index');
+
+    Route::get('/usuarios', function () {
+        return view('usuarios.index');
+    })->name('web.usuarios.index');
+
+    Route::get('/requisitos-iso', function () {
+        return view('requisitos-iso.index');
+    })->name('web.requisitos-iso.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

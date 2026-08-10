@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\AccionCorrectivaController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\InformeController;
 use App\Http\Controllers\Api\RequisitoIsoController;
+use App\Http\Controllers\Api\AreaController;
+use App\Http\Controllers\Api\UserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
@@ -36,5 +38,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::get('/requisito-isos', [RequisitoIsoController::class, 'index']);
     Route::get('/requisito-isos/{id}', [RequisitoIsoController::class, 'show']);
     Route::patch('/requisito-isos/{id}', [RequisitoIsoController::class, 'update']);
+
+    Route::apiResource('areas', AreaController::class);
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::patch('/users/{id}', [UserController::class, 'update']);
 
 });

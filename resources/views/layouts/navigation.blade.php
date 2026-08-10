@@ -27,6 +27,18 @@
                     <x-nav-link :href="route('web.acciones-correctivas.index')" :active="request()->routeIs('web.acciones-correctivas.*')">
                         {{ __('Acciones Correctivas') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('web.evidencias.index')" :active="request()->routeIs('web.evidencias.*')">
+                        {{ __('Evidencias') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.requisitos-iso.index')" :active="request()->routeIs('web.requisitos-iso.*')">
+                        {{ __('Requisitos ISO') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.areas.index')" :active="request()->routeIs('web.areas.*')">
+                        {{ __('Áreas') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('web.usuarios.index')" :active="request()->routeIs('web.usuarios.*')">
+                        {{ __('Usuarios') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -48,6 +60,11 @@
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
+                        </x-dropdown-link>
+
+                        <!-- Enlace para Seguridad 2FA -->
+                        <x-dropdown-link :href="route('2fa.setup')">
+                            {{ __('Seguridad 2FA') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -94,6 +111,18 @@
             <x-responsive-nav-link :href="route('web.acciones-correctivas.index')" :active="request()->routeIs('web.acciones-correctivas.*')">
                 {{ __('Acciones Correctivas') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.evidencias.index')" :active="request()->routeIs('web.evidencias.*')">
+                {{ __('Evidencias') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.requisitos-iso.index')" :active="request()->routeIs('web.requisitos-iso.*')">
+                {{ __('Requisitos ISO') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.areas.index')" :active="request()->routeIs('web.areas.*')">
+                {{ __('Áreas') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('web.usuarios.index')" :active="request()->routeIs('web.usuarios.*')">
+                {{ __('Usuarios') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -106,6 +135,11 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
+                </x-responsive-nav-link>
+
+                <!-- Enlace Responsive para Seguridad 2FA -->
+                <x-responsive-nav-link :href="route('2fa.setup')" :active="request()->routeIs('2fa.setup')">
+                    {{ __('Seguridad 2FA') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

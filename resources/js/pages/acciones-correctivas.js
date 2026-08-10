@@ -50,7 +50,7 @@ export function accionesCorrectivasIndex() {
 
                     if (this.hallazgoIdFiltro) {
                         data = data.filter(
-                            (item) => String(item.hallazgo_id) === String(this.hallazgoIdFiltro)
+                            (item) => String(item.hallazgo_id ?? item.hallazgo?.id) === String(this.hallazgoIdFiltro)
                         );
                     }
 
@@ -167,17 +167,20 @@ export function accionCorrectivaForm(modo, id = null) {
                 .then((response) => {
                     const item = response.data.data ?? response.data;
 
+    
+                    const targetHallazgoId = item.hallazgo_id ?? item.hallazgo?.id ?? '';
+
                     this.form = {
-                        hallazgo_id: item.hallazgo_id ?? '',
+                        hallazgo_id: targetHallazgoId,
                         causa_raiz: item.causa_raiz ?? '',
                         descripcion_accion: item.descripcion_accion ?? '',
-                        responsable_id: item.responsable?.id ?? '',
+                        responsable_id: item.responsable_id ?? item.responsable?.id ?? '',
                         fecha_limite: item.fecha_limite ?? '',
                         estado: item.estado ?? 'Pendiente',
-                        evidencia_cierre_id: item.evidencia_cierre?.id ?? '',
+                        evidencia_cierre_id: item.evidencia_cierre_id ?? item.evidencia_cierre?.id ?? '',
                     };
 
-                    return this.cargarEvidenciasDelHallazgo(item.hallazgo_id);
+                    return this.cargarEvidenciasDelHallazgo(targetHallazgoId);
                 })
                 .catch((err) => {
                     this.error = mensajeError(err, 'No se pudo cargar la acción correctiva.');
@@ -189,6 +192,7 @@ export function accionCorrectivaForm(modo, id = null) {
 
         cargarEvidenciasDelHallazgo(hallazgoId) {
             if (!hallazgoId) {
+                this.evidenciasDelHallazgo = [];
                 return Promise.resolve();
             }
 
@@ -196,9 +200,11 @@ export function accionCorrectivaForm(modo, id = null) {
                 .get('/api/evidencias')
                 .then((response) => {
                     const data = response.data.data ?? response.data;
-                    this.evidenciasDelHallazgo = data.filter(
-                        (ev) => String(ev.hallazgo_id) === String(hallazgoId)
-                    );
+
+                    this.evidenciasDelHallazgo = data.filter((ev) => {
+                        if (!ev.hallazgo_id) return false;
+                        return String(ev.hallazgo_id) === String(hallazgoId);
+                    });
                 })
                 .catch(() => {
                     this.evidenciasDelHallazgo = [];

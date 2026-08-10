@@ -1,5 +1,3 @@
-{{-- Espera: $checklists (colección de la ruta web) y el x-data hallazgoForm() del padre --}}
-
 <div x-show="loading" x-cloak class="text-center text-gray-500 text-sm py-8">
     {{ __('Cargando...') }}
 </div>

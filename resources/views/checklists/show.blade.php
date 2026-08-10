@@ -14,6 +14,9 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <div x-show="!loading && !error && item" x-cloak class="flex items-center justify-end gap-4">
+                <a :href="`/evidencias/create?checklist_id=${item?.id}`" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                    {{ __('+ Nueva evidencia') }}
+                </a>
                 <a
                     x-show="esNoConforme"
                     x-cloak
@@ -66,9 +69,47 @@
                     <p class="text-sm text-gray-800" x-text="item?.observaciones || '—'"></p>
                 </div>
 
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" x-show="item?.justificacion">
-                    <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">{{ __('Justificación (SoA)') }}</h4>
-                    <p class="text-sm text-gray-800" x-text="item?.justificacion"></p>
+                <!-- SECCIÓN DE HALLAZGOS ASOCIADOS -->
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">{{ __('Hallazgos Vinculados') }}</h4>
+                    <template x-if="item?.hallazgos && item.hallazgos.length > 0">
+                        <div class="divide-y divide-gray-100">
+                            <template x-for="h in item.hallazgos" :key="h.id">
+                                <div class="py-2 flex items-center justify-between">
+                                    <div>
+                                        <span class="font-semibold text-sm text-gray-700" x-text="h.tipo_hallazgo"></span>
+                                        <p class="text-xs text-gray-500" x-text="h.descripcion"></p>
+                                    </div>
+                                    <a :href="`/hallazgos/${h.id}`" class="text-xs text-indigo-600 hover:text-indigo-800">
+                                        {{ __('Ver hallazgo') }} &rarr;
+                                    </a>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!item?.hallazgos || item.hallazgos.length === 0">
+                        <p class="text-xs text-gray-400">{{ __('No hay hallazgos registrados para este ítem.') }}</p>
+                    </template>
+                </div>
+
+                <!-- SECCIÓN DE EVIDENCIAS ASOCIADAS -->
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">{{ __('Evidencias Cargadas') }}</h4>
+                    <template x-if="item?.evidencias && item.evidencias.length > 0">
+                        <ul class="divide-y divide-gray-100 text-sm">
+                            <template x-for="ev in item.evidencias" :key="ev.id">
+                                <li class="py-2 flex items-center justify-between">
+                                    <span class="text-gray-700" x-text="ev.nombre_archivo || ev.ruta_almacenamiento || ('Evidencia #' + ev.id)"></span>
+                                    <a :href="`/evidencias/${ev.id}`" class="text-xs text-indigo-600 hover:text-indigo-800">
+                                        {{ __('Ver evidencia') }}
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template x-if="!item?.evidencias || item.evidencias.length === 0">
+                        <p class="text-xs text-gray-400">{{ __('No se han adjuntado evidencias digitales aún.') }}</p>
+                    </template>
                 </div>
 
             </div>

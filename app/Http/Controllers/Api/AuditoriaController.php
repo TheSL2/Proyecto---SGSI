@@ -103,7 +103,7 @@ class AuditoriaController extends Controller
 
     public function show($id)
     {
-        $auditoria = Auditoria::with(['auditorLider', 'areas'])->find($id);
+        $auditoria = Auditoria::with(['auditorLider', 'areas', 'equipoAuditor'])->find($id);
 
         if (!$auditoria) {
             return response()->json(['message' => 'Auditoría no encontrada'], 404);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ChecklistAuditoria;
 use App\Models\Hallazgo;
@@ -21,17 +22,17 @@ class Evidencia extends Model
         'subido_por',
     ];
 
-    public function checklist()
+    public function checklist(): BelongsTo
     {
         return $this->belongsTo(ChecklistAuditoria::class, 'checklist_id');
     }
 
-    public function hallazgo()
+    public function hallazgo(): BelongsTo
     {
         return $this->belongsTo(Hallazgo::class, 'hallazgo_id');
     }
 
-    public function usuario()
+    public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'subido_por');
     }

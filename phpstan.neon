@@ -1,0 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    level: 5
+
+    ignoreErrors:
+        - message: '#Access to an undefined property App\\Http\\Resources\\[A-Za-z]+Resource::\$[a-zA-Z0-9_]+\.#'
+
+        - message: '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$[a-zA-Z0-9_]+\.#'
+
+        - message: '#Access to an undefined property Illuminate\\Support\\HigherOrderCollectionProxy.*\$[a-zA-Z0-9_]+\.#'
+
+        - message: '#Using nullsafe property access ".*" on left side of \?\? is unnecessary\.#'
+
+        - message: '#Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.#'
+          path: app/Http/Controllers/Auth/VerifyEmailController.php

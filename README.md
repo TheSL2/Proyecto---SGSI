@@ -1,59 +1,180 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Gestión de Auditorías Internas (SGSI) — ISO/IEC 27001:2022
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend en **Laravel 12** para la gestión de auditorías internas de un Sistema de Gestión de Seguridad
+de la Información, basado en **ISO/IEC 27001:2022**. Incluye planificación de auditorías, checklist de
+requisitos y controles del Anexo A, gestión de hallazgos y no conformidades, acciones correctivas (CAPA),
+evidencias digitales con verificación de integridad (SHA-256), y un dashboard ejecutivo con generación de
+informes en PDF.
 
-## About Laravel
+La interfaz web (Blade + Alpine.js) y la API REST (para integraciones externas, probada con Postman)
+comparten la misma base de código y las mismas reglas de negocio.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Docker Engine](https://docs.docker.com/engine/install/) 24+ y el plugin **Docker Compose** (`docker compose version`)
+- Git
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+No necesitas tener PHP, Composer, Node ni MySQL instalados en tu máquina — todo corre dentro de los contenedores.
 
-## Learning Laravel
+## Instalación con Docker
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clonar el repositorio
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/TheSL2/Proyecto---SGSI.git
+cd Proyecto---SGSI
+```
 
-## Laravel Sponsors
+### 2. Configurar variables de entorno
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cp .env.example .env
+```
 
-### Premium Partners
+Edita `.env` y define al menos estos valores (los demás pueden quedarse con su default):
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```env
+DB_CONNECTION=mysql
+DB_DATABASE=SGSI
+DB_USERNAME=root
+DB_PASSWORD=elige-una-contraseña-segura
 
-## Contributing
+SANCTUM_STATEFUL_DOMAINS=localhost,localhost:8090,127.0.0.1,127.0.0.1:8090,localhost:8443,127.0.0.1:8443
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`DB_PASSWORD` es también la contraseña que usará el contenedor de MySQL para el usuario `root`
+(`docker-compose.yml` la toma como `MYSQL_ROOT_PASSWORD`) — usa el mismo valor en ambos lados, ya está
+resuelto automáticamente porque ambos leen la misma variable del `.env`.
 
-## Code of Conduct
+### 3. Generar un certificado SSL autofirmado (para HTTPS local)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+El proyecto sirve tráfico por HTTP (puerto `8090`) y HTTPS (puerto `8443`). Para HTTPS necesitas un
+certificado en `docker/nginx/certs/`. Genera uno autofirmado (válido para desarrollo/demo local):
 
-## Security Vulnerabilities
+```bash
+mkdir -p docker/nginx/certs
+openssl req -x509 -nodes -newkey rsa:2048 \
+  -keyout docker/nginx/certs/selfsigned.key \
+  -out docker/nginx/certs/selfsigned.crt \
+  -days 365 \
+  -subj "/CN=localhost"
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+El navegador mostrará una advertencia de "certificado no confiable" al entrar por `https://localhost:8443`
+— es esperado con un certificado autofirmado; acepta la excepción para continuar. **Para un entorno de
+producción real**, sustituye este certificado por uno emitido por una autoridad confiable (por ejemplo,
+[Let's Encrypt](https://letsencrypt.org/) vía Certbot) apuntando al dominio real.
 
-## License
+### 4. Levantar los contenedores
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+docker compose up -d --build
+```
+
+Esto construye la imagen de la aplicación (multi-stage: Composer → build de assets con Node/Vite →
+runtime PHP-FPM en Alpine, ejecutando como usuario no-root `sgsi`) y levanta 4 servicios:
+
+| Servicio | Descripción | Puerto expuesto |
+|---|---|---|
+| `app` | PHP-FPM 8.2 (Laravel) | interno (9000) |
+| `nginx` | Servidor web | `8090` (HTTP), `8443` (HTTPS) |
+| `db` | MySQL 8.0 | interno (3306) |
+| `redis` | Cache/colas | interno (6379) |
+
+Verifica que los 4 contenedores estén corriendo:
+
+```bash
+docker compose ps
+```
+
+### 5. Generar la clave de la aplicación, migrar y sembrar datos
+
+```bash
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan storage:link
+```
+
+El seeder carga el catálogo completo de los 93 controles del Anexo A + cláusulas 4-10 de ISO/IEC
+27001:2022, áreas de ejemplo, y usuarios de prueba.
+
+### 6. Acceder a la aplicación
+
+- **Web (HTTP)**: [http://localhost:8090](http://localhost:8090)
+- **Web (HTTPS)**: [https://localhost:8443](https://localhost:8443)
+- **API**: mismas URLs con prefijo `/api/...`
+
+## Desarrollo local sin Docker (opcional)
+
+Si prefieres correr el proyecto directo en tu máquina para desarrollo activo (hot-reload de Vite, por ejemplo):
+
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+npm run dev &
+php artisan serve
+```
+
+## Pruebas
+
+### Tests automatizados (PHPUnit)
+
+```bash
+docker compose exec app php artisan test
+```
+
+### Análisis estático (Larastan / PHPStan)
+
+```bash
+docker compose exec app vendor/bin/phpstan analyse
+```
+
+### Colección de Postman
+
+La colección con las pruebas de la API REST está en [`postman/`](./postman). Impórtala en Postman para
+correr la suite completa contra el entorno que prefieras (local o Docker).
+
+### Análisis de vulnerabilidades (Trivy)
+
+El escaneo de la imagen de contenedor con [Trivy](https://github.com/aquasecurity/trivy) se documenta en
+[`trivy-report.txt`](./trivy-report.txt). Para regenerarlo:
+
+```bash
+trivy image sgsi_app:latest --output trivy-report.txt
+```
+
+## Integración continua
+
+Cada push a `main`, `dev`, o cualquier rama `feature/*` corre automáticamente, vía GitHub Actions
+(`.github/workflows/ci.yml`):
+- Análisis estático con PHPStan/Larastan
+- Suite completa de tests con PHPUnit (SQLite en memoria)
+
+## Estructura del proyecto
+
+Proyecto Laravel estándar, sin subcarpetas adicionales — el código vive directo en la raíz del repositorio.
+
+```
+app/Http/Controllers/Api/   → Controladores REST (Auditorías, Checklists, Hallazgos, Evidencias, etc.)
+app/Http/Controllers/Auth/  → Autenticación (Breeze) + Autenticación de dos factores (2FA)
+app/Models/                 → Modelos Eloquent
+app/Services/               → AuditoriaService (canal de logging de auditoría)
+resources/views/            → Vistas Blade (interfaz web completa)
+resources/js/pages/         → Componentes Alpine.js que consumen la API
+routes/web.php              → Rutas de la interfaz web
+routes/api.php              → Rutas de la API REST
+docker/                     → Configuración de Nginx (HTTP+HTTPS) y PHP (opcache)
+postman/                    → Colección de Postman para probar la API
+```
+
+## Seguridad
+
+- Autenticación de dos factores (TOTP) disponible para todos los usuarios en `/2fa/setup`.
+- Rate limiting en login (5 intentos/min) y en la API.
+- Headers de seguridad (HSTS, X-Frame-Options, X-Content-Type-Options) configurados en Nginx.
+- Evidencias digitales con hash SHA-256 para garantizar integridad.
+- El contenedor de la aplicación corre como usuario no-root (`sgsi`).

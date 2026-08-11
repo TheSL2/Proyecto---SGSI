@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -38,7 +39,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function area()
+    public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);
     }

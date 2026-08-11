@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ChecklistAuditoria;
-use App\Models\AccionCorrectiva;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Hallazgo extends Model
 {
@@ -21,12 +21,12 @@ class Hallazgo extends Model
         'estado_notificacion',
     ];
 
-    public function checklist()
+    public function checklist(): BelongsTo
     {
         return $this->belongsTo(ChecklistAuditoria::class, 'checklist_id');
     }
 
-    public function accionesCorrectivas()
+    public function accionesCorrectivas(): HasMany
     {
         return $this->hasMany(AccionCorrectiva::class, 'hallazgo_id');
     }

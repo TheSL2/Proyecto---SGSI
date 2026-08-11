@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class RequisitoIso extends Model
@@ -17,7 +18,7 @@ class RequisitoIso extends Model
         'orientacion_implementacion'
     ];
 
-    public function checklists()
+    public function checklists(): HasMany
     {
         return $this->hasMany(ChecklistAuditoria::class, 'requisito_iso_id');
     }

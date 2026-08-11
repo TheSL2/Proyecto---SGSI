@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Hallazgo;
 use App\Models\User;
 use App\Models\Evidencia;
@@ -25,22 +26,22 @@ class AccionCorrectiva extends Model
         'verificado_por',
     ];
 
-    public function hallazgo()
+    public function hallazgo(): BelongsTo
     {
         return $this->belongsTo(Hallazgo::class, 'hallazgo_id');
     }
 
-    public function responsable()
+    public function responsable(): BelongsTo
     {
         return $this->belongsTo(User::class, 'responsable_id');
     }
 
-    public function evidenciaCierre()
+    public function evidenciaCierre(): BelongsTo
     {
         return $this->belongsTo(Evidencia::class, 'evidencia_cierre_id');
     }
 
-    public function verificadoPor()
+    public function verificadoPor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verificado_por');
     }

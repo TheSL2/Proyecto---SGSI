@@ -23,7 +23,7 @@ class InformeController extends Controller
 
         if (!in_array($auditoria->estado, ['Cerrada', 'En Revisión de Informe'])) {
             return response()->json([
-                'message' => 'RN-INFORMES-01: El informe oficial solo puede generarse si la auditoría está Cerrada o En Revisión de Informe.'
+                'message' => 'El informe oficial solo puede generarse si la auditoría está Cerrada o En Revisión de Informe.'
             ], 422);
         }
 
@@ -39,7 +39,7 @@ class InformeController extends Controller
 
         if ($checklistsSinHallazgo->isNotEmpty()) {
             return response()->json([
-                'message' => 'RN-CK-02: Todo ítem de checklist marcado como No Conforme Mayor o No Conforme Menor debe tener un Hallazgo vinculado.',
+                'message' => 'Todo ítem de checklist marcado como No Conforme Mayor o No Conforme Menor debe tener un Hallazgo vinculado.',
                 'checklist_pendientes' => $checklistsSinHallazgo->pluck('id'),
             ], 422);
         }
@@ -49,7 +49,7 @@ class InformeController extends Controller
 
         if ($sinAccion->isNotEmpty()) {
             return response()->json([
-                'message' => 'RN-INFORMES-01: El 100% de los hallazgos debe tener un plan de acción asignado.',
+                'message' => 'El 100% de los hallazgos debe tener un plan de acción asignado.',
                 'hallazgos_pendientes' => $sinAccion->pluck('id'),
             ], 422);
         }

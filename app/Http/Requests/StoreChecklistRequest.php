@@ -23,7 +23,7 @@ class StoreChecklistRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $requisito = RequisitoIso::find($value);
                     if ($requisito && !$requisito->aplicable) {
-                        $fail('RN-APLICABILIDAD: Este requisito no aplica a la organización (definido en la SoA) y no puede vincularse a un checklist.');
+                        $fail('Este requisito no aplica a la organización (definido en la SoA) y no puede vincularse a un checklist.');
                     }
                 },
             ],

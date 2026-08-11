@@ -14,6 +14,9 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <div x-show="!loading && !error && item" x-cloak class="flex items-center justify-end gap-4">
+                <a :href="`/evidencias/create?hallazgo_id=${item?.id}`" class="text-sm text-indigo-600 hover:text-indigo-800">
+                    {{ __('+ Nueva evidencia') }}
+                </a>
                 <a :href="`/hallazgos/${item?.id}/edit`" class="text-sm text-gray-500 hover:text-gray-700">
                     {{ __('Editar') }}
                 </a>
@@ -77,7 +80,7 @@
                     </div>
 
                     <div x-show="sinAccionCorrectiva" x-cloak class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md p-3">
-                        {{ __('RN-HL-01: esta No Conformidad todavía no tiene ningún plan de acción correctiva asignado.') }}
+                        {{ __('Esta No Conformidad todavía no tiene ningún plan de acción correctiva asignado.') }}
                     </div>
 
                     <ul class="divide-y divide-gray-100" x-show="!sinAccionCorrectiva" x-cloak>
@@ -91,6 +94,13 @@
                                     </p>
                                 </div>
                                 <span class="text-xs font-medium text-gray-600" x-text="accion.estado"></span>
+                                <a 
+                                    x-show="accion.estado !== 'Verificada'" 
+                                    :href="`/acciones-correctivas/${accion.id}/edit`" 
+                                    class="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                                >
+                                    Editar
+                                </a>
                             </li>
                         </template>
                     </ul>

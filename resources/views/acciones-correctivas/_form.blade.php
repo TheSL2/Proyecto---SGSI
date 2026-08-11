@@ -10,7 +10,11 @@
 
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Hallazgo origen') }}</label>
-        <select x-model="form.hallazgo_id" @change="cargarEvidenciasDelHallazgo(form.hallazgo_id)" class="w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+        <select 
+            x-model="form.hallazgo_id" 
+            @change="cargarEvidenciasDelHallazgo($event.target.value)" 
+            class="w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500"
+        >
             <option value="">{{ __('Selecciona un hallazgo') }}</option>
             @foreach ($hallazgos as $hallazgo)
                 <option value="{{ $hallazgo->id }}">
@@ -24,7 +28,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Análisis de causa raíz') }}</label>
         <textarea x-model="form.causa_raiz" rows="3" class="w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
         <p class="text-xs text-gray-400 mt-1">
-            {{ __('RN-AC-01: obligatorio si el hallazgo origen es una No Conformidad Mayor o Menor.') }}
+            {{ __('Obligatorio si el hallazgo origen es una No Conformidad Mayor o Menor.') }}
         </p>
     </div>
 
@@ -72,7 +76,7 @@
         </div>
     </div>
     <p class="text-xs text-gray-400" x-show="form.estado === 'Verificada'" x-cloak>
-        {{ __('RN-AC-02: el responsable de la acción no puede verificar su propio cierre; debe hacerlo un Auditor, Consultor o Administrador distinto.') }}
+        {{ __('El responsable de la acción no puede verificar su propio cierre; debe hacerlo un Auditor, Consultor o Administrador distinto.') }}
     </p>
 
     <div class="flex items-center justify-end gap-3 pt-2 border-t">

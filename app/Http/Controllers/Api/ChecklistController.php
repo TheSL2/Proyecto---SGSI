@@ -21,7 +21,7 @@ class ChecklistController extends Controller
 
         if ($data['estado_cumplimiento'] === 'No Aplicable' && empty($data['justificacion'])) {
             return response()->json([
-                'message' => 'RN-CHECK LIST-01: Si un control se marca como No Aplicable, es obligatorio registrar la justificación técnica.'
+                'message' => 'Si un control se marca como No Aplicable, es obligatorio registrar la justificación técnica.'
             ], 422);
         }
 
@@ -33,7 +33,7 @@ class ChecklistController extends Controller
 
     public function show($id)
     {
-        $item = ChecklistAuditoria::with(['auditoria', 'requisitoIso'])->find($id);
+        $item = ChecklistAuditoria::with(['auditoria', 'requisitoIso', 'hallazgos', 'evidencias'])->find($id);
         if (!$item) {
             return response()->json(['message' => 'Ítem no encontrado'], 404);
         }
@@ -51,7 +51,7 @@ class ChecklistController extends Controller
 
         if (isset($data['estado_cumplimiento']) && $data['estado_cumplimiento'] === 'No Aplicable' && empty($data['justificacion'])) {
             return response()->json([
-                'message' => 'RN-CHECK LIST-01: Si un control se marca como No Aplicable, es obligatorio registrar la justificación técnica.'
+                'message' => 'Si un control se marca como No Aplicable, es obligatorio registrar la justificación técnica.'
             ], 422);
         }
 

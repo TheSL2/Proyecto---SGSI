@@ -42,7 +42,7 @@
             </template>
         </select>
         <p class="text-xs text-gray-400 mt-1">
-            {{ __('El flujo de estados es estricto (RN-PA-03): solo puedes quedarte igual o avanzar un paso a la vez.') }}
+            {{ __('El flujo de estados es estricto: solo puedes quedarte igual o avanzar un paso a la vez.') }}
         </p>
     </div>
 
@@ -70,7 +70,7 @@
             @endif
         </div>
         <p class="text-xs text-gray-400 mt-1">
-            {{ __('Un auditor no puede evaluar (como líder o parte del equipo) un área a la que pertenece (RN-USUARIOS Y ROLES-01).') }}
+            {{ __('Un auditor no puede evaluar (como líder o parte del equipo) un área a la que pertenece.') }}
         </p>
     </div>
 

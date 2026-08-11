@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\TwoFactorController;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Area;
 use App\Models\User;
 use App\Models\RequisitoIso;
@@ -11,7 +12,7 @@ use App\Models\ChecklistAuditoria;
 use App\Models\Hallazgo;
 
 Route::get('/', function () {
-    return view('welcome');
+    return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
@@ -114,6 +115,33 @@ Route::middleware('auth')->group(function () {
     Route::get('/acciones-correctivas/{id}', function (string $id) {
         return view('acciones-correctivas.show', ['id' => $id]);
     })->name('web.acciones-correctivas.show');
+
+    Route::get('/evidencias', function () {
+        return view('evidencias.index');
+    })->name('web.evidencias.index');
+
+    Route::get('/evidencias/create', function () {
+        return view('evidencias.create', [
+            'checklists' => ChecklistAuditoria::with(['auditoria', 'requisitoIso'])->latest()->take(200)->get(),
+            'hallazgos' => Hallazgo::with(['checklist.auditoria'])->latest()->take(200)->get(),
+        ]);
+    })->name('web.evidencias.create');
+
+    Route::get('/evidencias/{id}', function (string $id) {
+        return view('evidencias.show', ['id' => $id]);
+    })->name('web.evidencias.show');
+
+    Route::get('/areas', function () {
+        return view('areas.index');
+    })->name('web.areas.index');
+
+    Route::get('/usuarios', function () {
+        return view('usuarios.index');
+    })->name('web.usuarios.index');
+
+    Route::get('/requisitos-iso', function () {
+        return view('requisitos-iso.index');
+    })->name('web.requisitos-iso.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

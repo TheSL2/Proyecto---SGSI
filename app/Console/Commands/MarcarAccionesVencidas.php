@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Notification as Notify;
 class MarcarAccionesVencidas extends Command
 {
     protected $signature = 'acciones:marcar-vencidas';
-    protected $description = 'RN-AC-03: marca como Vencida las acciones correctivas con fecha_limite expirada y notifica al responsable y auditor líder.';
+    protected $description = 'Marca como Vencida las acciones correctivas con fecha_limite expirada y notifica al responsable y auditor líder.';
 
     public function handle(): int
     {

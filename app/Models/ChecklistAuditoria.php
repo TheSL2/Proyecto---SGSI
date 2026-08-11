@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\RequisitoIso;
 use App\Models\Auditoria;
 use App\Models\Hallazgo;
+use App\Models\Evidencia;
 
 class ChecklistAuditoria extends Model
 {
@@ -33,5 +34,10 @@ class ChecklistAuditoria extends Model
     public function hallazgos()
     {
         return $this->hasMany(Hallazgo::class, 'checklist_id');
+    }
+
+    public function evidencias()
+    {
+        return $this->hasMany(Evidencia::class, 'checklist_id');
     }
 }

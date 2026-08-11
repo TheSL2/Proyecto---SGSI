@@ -58,11 +58,13 @@ class EvidenciaController extends Controller
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
 
-        $estadoAuditoria = $evidencia->checklist?->auditoria?->estado ?? 'Borrador';
+        $estadoAuditoria = $evidencia->checklist?->auditoria?->estado
+            ?? $evidencia->hallazgo?->checklist?->auditoria?->estado
+            ?? 'Borrador';
 
         if (in_array($estadoAuditoria, ['En Ejecución', 'En Revisión de Informe', 'Cerrada']) && $request->user()->rol !== 'Administrador') {
             return response()->json([
-                'message' => 'RN-EV-02: Inmutabilidad garantizada. No se pueden eliminar evidencias de auditorías en ejecución o posteriores.'
+                'message' => 'Inmutabilidad garantizada. No se pueden eliminar evidencias de auditorías en ejecución o posteriores.'
             ], 403);
         }
 
